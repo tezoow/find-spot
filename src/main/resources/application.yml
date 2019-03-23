@@ -1,3 +1,13 @@
+feign:
+  kakao:
+    url: https://dapi.kakao.com/v2
+  client:
+    config:
+      feignName:
+        connectTimeout: 1000
+        readTimeout: 2000
+        loggerLevel: full
+
 constants:
   auth-keys:
     kakao: 5ce9768b9c282db05c358c10045eb301
