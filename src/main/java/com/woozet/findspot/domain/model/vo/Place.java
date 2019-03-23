@@ -3,8 +3,8 @@ package com.woozet.findspot.domain.model.vo;
 import lombok.Data;
 
 @Data
-public class Spot {
-    static final String URL_DAUM_MAP = "http://map.daum.net/link/map";
+public class Place {
+    private static final String URL_DAUM_MAP = "http://map.daum.net/link/map";
 
     private String id;
     private String placeName;

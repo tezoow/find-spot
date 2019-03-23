@@ -1,6 +1,6 @@
 package com.woozet.findspot.service;
 
-import com.woozet.findspot.domain.model.vo.SpotResponse;
+import com.woozet.findspot.domain.model.vo.PlaceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SpotServiceTest {
+public class PlaceServiceTest {
     @Autowired
-    private SpotService spotService;
+    private PlaceService placeService;
     private final Pageable defaultPageable = PageRequest.of(1, 10);
 
     @Test
     public void search_정상() {
-        SpotResponse result = spotService.search("치킨", defaultPageable);
+        PlaceResponse result = placeService.searchByKeyword("치킨", defaultPageable);
         log.info("result : {}", result);
 
         assertThat(result.getDocuments()).isNotNull();
@@ -33,18 +33,18 @@ public class SpotServiceTest {
 
     @Test
     public void search_빈문자열() {
-        SpotResponse result = spotService.search("", defaultPageable);
+        PlaceResponse result = placeService.searchByKeyword("", defaultPageable);
         assertForEmptyResult(result);
     }
 
     @Test
     public void search_검색결과없음() {
-        SpotResponse result = spotService.search("괞찮낳엲잃렇겏젃윾멶검샋겳괍앉낧옭닋깏", defaultPageable);
+        PlaceResponse result = placeService.searchByKeyword("괞찮낳엲잃렇겏젃윾멶검샋겳괍앉낧옭닋깏", defaultPageable);
         assertForEmptyResult(result);
 
     }
 
-    private void assertForEmptyResult(SpotResponse result) {
+    private void assertForEmptyResult(PlaceResponse result) {
         assertThat(result.getDocuments()).isNotNull();
         assertThat(result.getDocuments().size()).isZero();
         assertThat(result.isLastPage()).isTrue();
@@ -54,6 +54,6 @@ public class SpotServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void search_잘못된_페이지번호() {
-        spotService.search("", PageRequest.of(0, 10));
+        placeService.searchByKeyword("", PageRequest.of(0, 10));
     }
 }

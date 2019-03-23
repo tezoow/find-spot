@@ -1,6 +1,6 @@
 package com.woozet.findspot.domain.model.vo.kakao;
 
-import com.woozet.findspot.domain.model.vo.Spot;
+import com.woozet.findspot.domain.model.vo.Place;
 import lombok.Data;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class KakaoResource {
     private MetaInfo meta;
-    private List<Spot> documents;
+    private List<Place> documents;
 }
