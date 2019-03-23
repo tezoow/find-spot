@@ -6,6 +6,7 @@ import com.woozet.findspot.domain.remote.KaKaoOpenApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,8 @@ public class PlaceServiceImplKakao implements PlaceService {
 
     @Cacheable(key = "keyword_api")
     @Override
-    public PlaceResponse searchByKeyword(String keyword, Pageable pageable) {
-        if (pageable.getPageNumber() < 1) {
-            throw new IllegalArgumentException("Index of page must start with 1");
-        }
+    public PlaceResponse searchByKeyword(String keyword, Pageable requestPageable) {
+        Pageable pageable = getPageable(requestPageable);
         if (StringUtils.isEmpty(keyword)) {
             return PlaceResponse.builder().build();
         }
@@ -31,9 +30,30 @@ public class PlaceServiceImplKakao implements PlaceService {
         return PlaceResponse.builder()
                 .documents(resource.getDocuments())
                 .page(pageable.getPageNumber())
-                .total(resource.getMeta().getTotalCount())
+                .total(resource.getMeta().getPageableCount())
                 .isLastPage(resource.getMeta().isEnd())
                 .build();
+    }
+
+    private Pageable getPageable(Pageable requestPageable) {
+        // depends on api spec page
+        final int PAGE_STARTS = 1;
+        final int PAGE_ENDS = 45;
+        final int SIZE_MAX = 15;
+        int page = requestPageable.getPageNumber();
+        int size = requestPageable.getPageSize();
+
+        if (page < PAGE_STARTS) {
+            page = PAGE_STARTS;
+        } else if (page > PAGE_ENDS) {
+            page = PAGE_ENDS;
+        }
+
+        if (size < 1 || size > 15) {
+            size = SIZE_MAX;
+        }
+
+        return PageRequest.of(page, size);
     }
 
     @CacheEvict(value = "${cache.keyword_api.eviction_cron", allEntries = true)
