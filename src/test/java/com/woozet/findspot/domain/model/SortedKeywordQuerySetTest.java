@@ -1,6 +1,5 @@
-package com.woozet.findspot.service;
+package com.woozet.findspot.domain.model;
 
-import com.woozet.findspot.domain.model.SortedKeywordQuerySet;
 import com.woozet.findspot.domain.model.vo.Keyword;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,9 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BestServiceTest {
-    @Autowired
-    private BestService bestService;
+public class SortedKeywordQuerySetTest {
     @Autowired
     private SortedKeywordQuerySet sortedKeywordQuerySet;
 
@@ -30,7 +28,7 @@ public class BestServiceTest {
     }
 
     @Test
-    public void getTop10Keyword_정상() {
+    public void setAndGetTop10_정상_셔플링10회() {
         List<String> queries = Arrays.asList(
                 "성남시청",
                 "카카오뱅크",
@@ -59,9 +57,14 @@ public class BestServiceTest {
                 "판교역4번출구",
                 "제주공항");
 
-        sortedKeywordQuerySet.reset();
-        queries.forEach(sortedKeywordQuerySet::set);
-        assertSortedList(bestService.getTop10Keywords());
+        for (int i = 0; i < 10; i++) {
+            sortedKeywordQuerySet.reset();
+            Collections.shuffle(queries);
+            log.info("queries : {}", queries);
+
+            queries.forEach(sortedKeywordQuerySet::set);
+            assertSortedList(sortedKeywordQuerySet.getTop10());
+        }
     }
 
     private void assertSortedList(List<Keyword> top10) {

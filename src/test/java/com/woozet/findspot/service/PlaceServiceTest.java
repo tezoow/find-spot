@@ -52,8 +52,8 @@ public class PlaceServiceTest {
         assertThat(result.getPage()).isEqualTo(defaultPageable.getPageNumber());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void search_잘못된_페이지번호() {
-        placeService.searchByKeyword("", PageRequest.of(0, 10));
+        assertForEmptyResult(placeService.searchByKeyword("", PageRequest.of(0, 10)));
     }
 }
