@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -13,8 +14,9 @@ import org.springframework.stereotype.Component;
 public class SearchQueryAspect {
     private final SortedKeywordQuerySet sortedKeywordQuerySet;
 
-    @Before("execution(* com.woozet.findspot.service.PlaceService.searchByKeyword(..)) && args(query, ..)")
-    public void setSearchQueriesToSortedSet(JoinPoint joinPoint, String query) {
-        sortedKeywordQuerySet.set(query);
+    @Before("execution(* com.woozet.findspot.service.PlaceService.searchByKeyword(..)) && args(query, pageable)")
+    public void setSearchQueriesToSortedSet(JoinPoint joinPoint, String query, Pageable pageable) {
+        if (pageable.getPageNumber() == 1)
+            sortedKeywordQuerySet.set(query);
     }
 }
