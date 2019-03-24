@@ -4,6 +4,7 @@ import com.woozet.findspot.domain.model.vo.PlaceResponse;
 import com.woozet.findspot.domain.model.vo.kakao.KakaoResource;
 import com.woozet.findspot.domain.remote.KaKaoOpenApiService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +13,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaceServiceImplKakao implements PlaceService {
     private final KaKaoOpenApiService restService;
 
-    @Cacheable(key = "keyword_api")
+    @Cacheable(value = "keyword_api", key = "#keyword + '_' + #requestPageable.getPageNumber() + '_' + #requestPageable.getPageSize()", unless = "#result.documents.size() < 1")
     @Override
     public PlaceResponse searchByKeyword(String keyword, Pageable requestPageable) {
         Pageable pageable = getPageable(requestPageable);
@@ -56,8 +58,9 @@ public class PlaceServiceImplKakao implements PlaceService {
         return PageRequest.of(page, size);
     }
 
-    @CacheEvict(value = "${cache.keyword_api.eviction_cron", allEntries = true)
-    @Scheduled(cron = "0 0 * * *")
-    public void evict() {}
-
+    @CacheEvict(value = "keyword_api", allEntries = true)
+    @Scheduled(cron = "0 0 * * * *")
+    public void evict() {
+        log.info("evicted keyword_api cache");
+    }
 }
