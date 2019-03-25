@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "keyword_trend")
 @Data
 @Builder
 public class KeywordTrend {
