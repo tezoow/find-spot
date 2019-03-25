@@ -12,10 +12,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy
 @EnableScheduling
 @EnableCaching
-public class FindSpotApplication {
+public class FindPlaceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FindSpotApplication.class, args);
+		SpringApplication.run(FindPlaceApplication.class, args);
 	}
 
 }
