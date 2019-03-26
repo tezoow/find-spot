@@ -24,3 +24,13 @@
 ```bash
 ./gradlew test
 ```
+
+## Open Source Info
+#### Front-end
+* Vue.js
+* axios (HTTP client)
+* bootstrap with jQuery
+
+#### Back-end
+* lombok
+* openfeign (Spring Feign - HTTP client)
